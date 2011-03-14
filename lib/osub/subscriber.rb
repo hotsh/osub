@@ -62,24 +62,4 @@ module OSub
       {:body => challenge_code, :status => 200}
     end
   end
-
-  module Subscriptions
-    def Subscriptions.new(callback_url, topic_url, secret = nil)
-      if not defined?(@@instances)
-        @@instances = {}
-      end
-
-      if @@instances[topic_url] == nil
-        sub = OSub::Subscription.new(callback_url, topic_url, secret)
-        @@instances[topic_url] = sub
-      end
-
-      @@instances[topic_url]
-    end
-
-    def Subscriptions.[](topic_url)
-      return nil if not defined?(@@instances)
-      @@instances[topic_url]
-    end
-  end
 end
