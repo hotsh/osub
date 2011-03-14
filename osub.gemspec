@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.authors     = ['Hackers of the Severed Hand']
   s.email       = ['hotsh@xomb.org']
   s.homepage    = "http://github.com/hotsh/osub"
-  s.summary     = %q{}
-  s.description = %q{}
+  s.summary     = %q{This is a simple implementation of a subscriber in the PubSubHubbub protocol.}
+  s.description = %q{This is a simple implementation of a subscriber in the PubSubHubbub protocol.}
 
   s.rubyforge_project = "osub"
 
