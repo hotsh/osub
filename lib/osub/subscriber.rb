@@ -1,6 +1,7 @@
 require 'net/http'
 require 'uri'
 
+require 'ostatus'
 require 'hmac-sha1'
 
 module OSub
@@ -18,8 +19,13 @@ module OSub
       @topic_url = topic_url
     end
 
+    # Actively searches for hubs by talking to publisher directly
+    def hubs
+      OStatus::Feed.from_url(topic_url).hubs
+    end
+
     # Subscribe to the topic through the given hub.
-    def subscribe(hub_url = @topic_url, token = nil)
+    def subscribe(hub_url, token = nil)
       if token != nil
         @tokens << token.to_s
       end
@@ -27,7 +33,7 @@ module OSub
     end
 
     # Unsubscribe to the topic through the given hub.
-    def unsubscribe(hub_url = @topic_url, token = nil)
+    def unsubscribe(hub_url, token = nil)
       if token != nil
         @tokens << token.to_s
       end
