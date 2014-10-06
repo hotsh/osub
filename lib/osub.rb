@@ -1,3 +1,3 @@
-require_relative 'osub/subscriber'
+require_relative 'osub/subscribers'
 require_relative 'osub/subscription'
 
