@@ -40,7 +40,7 @@ module OSub
       change_subscription(:unsubscribe, hub_url, token)
     end
 
-    def change_subscription(mode, hub_url, token)
+    def change_subscription(mode, hub_url, token, redirect_limit = 10)
       hub_uri = URI.parse(hub_url)
 
       req = Net::HTTP::Post.new(hub_uri.request_uri)
@@ -54,10 +54,23 @@ module OSub
         'hub.topic' => @topic_url
       })
 
-      http = Net::HTTP.new(hub_uri.host, hub_uri.port)
-      http.use_ssl = (hub_uri.scheme == 'https')
+      http = Net::HTTP.new(hub_uri.hostname, hub_uri.port)
+      if hub_uri.scheme == 'https'
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+      end
 
-      http.request(req)
+      response = http.request(req)
+
+      if response.is_a?(Net::HTTPRedirection) && redirect_limit > 0
+        location = response['location']
+        self.change_subscription(mode, hub_url, token, redirect_limit - 1)
+      else
+        response
+      end
+
+    rescue OpenSSL::SSL::SSLError
+      return nil
     end
 
     def verify_subscription(token)
