@@ -41,14 +41,23 @@ module OSub
     end
 
     def change_subscription(mode, hub_url, token)
-      res = Net::HTTP.post_form(URI.parse(hub_url),
-                                { 'hub.mode' => mode.to_s,
-                                  'hub.callback' => @callback_url,
-                                  'hub.verify' => 'async',
-                                  'hub.verify_token' => token,
-                                  'hub.lease_seconds' => '',
-                                  'hub.secret' => @secret,
-                                  'hub.topic' => @topic_url})
+      hub_uri = URI.parse(hub_url)
+
+      req = Net::HTTP::Post.new(hub_uri.request_uri)
+      req.set_form_data({
+        'hub.mode' => mode.to_s,
+        'hub.callback' => @callback_url,
+        'hub.verify' => async ? 'async' : 'sync',
+        'hub.verify_token' => token,
+        'hub.lease_seconds' => '',
+        'hub.secret' => @secret,
+        'hub.topic' => @topic_url
+      })
+
+      http = Net::HTTP.new(hub_uri.host, hub_uri.port)
+      http.use_ssl = (hub_uri.scheme == 'https')
+
+      http.request(req)
     end
 
     def verify_subscription(token)
