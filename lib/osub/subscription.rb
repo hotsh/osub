@@ -47,7 +47,7 @@ module OSub
       req.set_form_data({
         'hub.mode' => mode.to_s,
         'hub.callback' => @callback_url,
-        'hub.verify' => async ? 'async' : 'sync',
+        'hub.verify' => 'async',
         'hub.verify_token' => token,
         'hub.lease_seconds' => '',
         'hub.secret' => @secret,
